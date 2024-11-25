@@ -52,6 +52,11 @@ namespace RiggableDice
             // if the key was f1, enable advantage rig mode
             KeyboardKey keyPressed = (KeyboardKey)Raylib.GetKeyPressed();
 
+            if (keyPressed == KeyboardKey.Backspace)
+            {
+                Game.CurrentScene = new TitleScene();
+            }
+
             if (keyPressed >= (KeyboardKey)290 && keyPressed <= (KeyboardKey)300)
             {
                 // if the key is F1, enter the Advantage Rig Mode
@@ -61,8 +66,17 @@ namespace RiggableDice
                 }
                 else
                 {
-                    _diceBeingRigged = 1;
-                    _advantageRigModeIsOn = true;
+                    if (!_advantageRigModeIsOn)
+                    {
+                        _advantageRigModeIsOn = true;
+                        _diceBeingRigged = 1;
+                    }
+                    else
+                    {
+                        _advantageRigModeIsOn = false;
+                        _diceBeingRigged = 0;
+                    }
+
                 }
 
 
@@ -87,7 +101,8 @@ namespace RiggableDice
             // if the player hits enter, rig the dice selected
             if (keyPressed == KeyboardKey.Enter && _diceBeingRigged > 0 && _diceBeingRigged <= _dieArray.Length)
             {
-                // if advantage rig mode is enabled, rig all the dice to be lower than the rig value except one, which will be the rig value
+                // if advantage rig mode is enabled, rig all the dice to be lower than the rig value except for one, which will be the rig value
+                // otherwise, the selected dice will have its result rigged to be the inputted result
                 if (_advantageRigModeIsOn)
                 {
                     int decidedDice = RandomNumberGenerator.GetInt32(0, _dieArray.Length);
@@ -100,7 +115,7 @@ namespace RiggableDice
                         }
                         else
                         {
-                            _dieArray[i].RiggedResult = RandomNumberGenerator.GetInt32(1, _riggedResultInput);
+                            _dieArray[i].RiggedResult = RandomNumberGenerator.GetInt32(1, _riggedResultInput + 1);
                         }
                     }
                 }
@@ -109,6 +124,8 @@ namespace RiggableDice
                     _dieArray[_diceBeingRigged - 1].RiggedResult = _riggedResultInput;
                 }
 
+                // reset all the rig values
+                _advantageRigModeIsOn = false;
                 _riggedResultInput = 0;
                 _diceBeingRigged = 0;
 
