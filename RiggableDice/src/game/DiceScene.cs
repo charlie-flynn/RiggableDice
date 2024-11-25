@@ -48,20 +48,8 @@ namespace RiggableDice
                 }
             }
 
-            /*
-             *     Zero = 48,
-                    One = 49,
-                    Two = 50,
-                    Three = 51,
-                    Four = 52,
-                    Five = 53,
-                *   Six = 54,
-                     Seven = 55,
-                     Eight = 56,
-                     Nine = 57,
-             */
-
             // check if the user inputted an F type of key to change the die being rigged
+            // if the key was f1, enable advantage rig mode
             KeyboardKey keyPressed = (KeyboardKey)Raylib.GetKeyPressed();
 
             if (keyPressed >= (KeyboardKey)290 && keyPressed <= (KeyboardKey)300)
@@ -130,7 +118,12 @@ namespace RiggableDice
 
         private int AppendDigit (int left, int right)
         {
-            return int.Parse(left.ToString() + right.ToString());
+            // convert the integers into strings to add the right to the left, then convert back into an int
+            if (left != null && right != null)
+                return int.Parse(left.ToString() + right.ToString());
+
+            else
+                return 0;
         }
 
         private Dice[] InstantiateDie(int dieAmount, int dieMaxRoll)
