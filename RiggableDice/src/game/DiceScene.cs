@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Raylib_cs;
 using MathLibrary;
+using System.Security.Cryptography;
 
 namespace RiggableDice
 {
@@ -96,23 +97,40 @@ namespace RiggableDice
             }
 
             // if the player hits enter, rig the dice selected
-
             if (keyPressed == KeyboardKey.Enter && _diceBeingRigged > 0 && _diceBeingRigged <= _dieArray.Length)
             {
-                _dieArray[_diceBeingRigged - 1].RiggedResult = _riggedResultInput;
+                // if advantage rig mode is enabled, rig all the dice to be lower than the rig value except one, which will be the rig value
+                if (_advantageRigModeIsOn)
+                {
+                    int decidedDice = RandomNumberGenerator.GetInt32(0, _dieArray.Length);
+
+                    for (int i = 0; i < _dieArray.Length; i++)
+                    {
+                        if (i == decidedDice)
+                        {
+                            _dieArray[i].RiggedResult = _riggedResultInput;
+                        }
+                        else
+                        {
+                            _dieArray[i].RiggedResult = RandomNumberGenerator.GetInt32(1, _riggedResultInput);
+                        }
+                    }
+                }
+                else
+                {
+                    _dieArray[_diceBeingRigged - 1].RiggedResult = _riggedResultInput;
+                }
+
                 _riggedResultInput = 0;
                 _diceBeingRigged = 0;
+
             }
 
         }
 
         private int AppendDigit (int left, int right)
         {
-            string temp;
-
-            temp = left.ToString() + right.ToString();
-
-            return int.Parse(temp);
+            return int.Parse(left.ToString() + right.ToString());
         }
 
         private Dice[] InstantiateDie(int dieAmount, int dieMaxRoll)
