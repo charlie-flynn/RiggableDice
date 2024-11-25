@@ -11,15 +11,20 @@ namespace RiggableDice
     internal class DiceScene : Scene
     {
         private Dice[] _dieArray;
+        private int _diceBeingRigged;
+        private int _riggedResultInput;
+        private bool _isInputGreaterThanOneDigit;
+        private bool _advantageRigModeIsOn;
         private Vector2 _center = new Vector2(Raylib.GetScreenWidth() / 2, Raylib.GetScreenHeight() / 2);
         private int _dieAmount;
         private int _dieMaxRoll;
+
 
         public DiceScene(int dieAmount, int dieMaxRoll)
         {
             _dieAmount = dieAmount;
             _dieMaxRoll = dieMaxRoll;
-
+            _advantageRigModeIsOn = false;
 
         }
 
@@ -42,7 +47,72 @@ namespace RiggableDice
                 }
             }
 
-            // check if the user inputted an F type of key to determine whether the user is allowed to input a rigged roll or not
+            /*
+             *     Zero = 48,
+                    One = 49,
+                    Two = 50,
+                    Three = 51,
+                    Four = 52,
+                    Five = 53,
+                *   Six = 54,
+                     Seven = 55,
+                     Eight = 56,
+                     Nine = 57,
+             */
+
+            // check if the user inputted an F type of key to change the die being rigged
+            KeyboardKey keyPressed = (KeyboardKey)Raylib.GetKeyPressed();
+
+            if (keyPressed >= (KeyboardKey)290 && keyPressed <= (KeyboardKey)300)
+            {
+                // if the key is F1, enter the Advantage Rig Mode
+                if (keyPressed != (KeyboardKey)290)
+                {
+                    _diceBeingRigged = (int)keyPressed - 290;
+                }
+                else
+                {
+                    _diceBeingRigged = 1;
+                    _advantageRigModeIsOn = true;
+                }
+
+
+            }
+            
+            // let the player input numbers so they can rig the dice
+            if ((keyPressed >= (KeyboardKey)48 && keyPressed <= (KeyboardKey)57) && _diceBeingRigged > 0 && _diceBeingRigged <= _dieArray.Length)
+            {
+                if (!_isInputGreaterThanOneDigit)
+                {
+                    _riggedResultInput = (int)keyPressed - 48;
+                    _isInputGreaterThanOneDigit = true;
+                }
+                else
+                {
+                    _riggedResultInput = AppendDigit(_riggedResultInput, (int)keyPressed - 48);
+                }
+
+                Console.WriteLine(_riggedResultInput.ToString());
+            }
+
+            // if the player hits enter, rig the dice selected
+
+            if (keyPressed == KeyboardKey.Enter && _diceBeingRigged > 0 && _diceBeingRigged <= _dieArray.Length)
+            {
+                _dieArray[_diceBeingRigged - 1].RiggedResult = _riggedResultInput;
+                _riggedResultInput = 0;
+                _diceBeingRigged = 0;
+            }
+
+        }
+
+        private int AppendDigit (int left, int right)
+        {
+            string temp;
+
+            temp = left.ToString() + right.ToString();
+
+            return int.Parse(temp);
         }
 
         private Dice[] InstantiateDie(int dieAmount, int dieMaxRoll)
@@ -57,8 +127,8 @@ namespace RiggableDice
                     temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, _center);
                     break;
                 case 2:
-                    temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 75, _center.y));
-                    temp[1] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 75, _center.y));
+                    temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 65, _center.y));
+                    temp[1] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 65, _center.y));
                     break;
                 case 3:
                     temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y));
@@ -66,10 +136,25 @@ namespace RiggableDice
                     temp[2] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 125, _center.y));
                     break;
                 case 4:
+                    temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 65, _center.y - 65));
+                    temp[1] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 65, _center.y - 65));
+                    temp[2] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 65, _center.y + 65));
+                    temp[3] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 65, _center.y + 65));
                     break;
                 case 5:
+                    temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y));
+                    temp[1] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 125, _center.y));
+                    temp[2] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 125, _center.y));
+                    temp[3] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y - 125));
+                    temp[4] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y + 125));
                     break;
                 case 6:
+                    temp[0] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y - 65));
+                    temp[1] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 125, _center.y - 65));
+                    temp[2] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 125, _center.y - 65));
+                    temp[3] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x, _center.y + 65));
+                    temp[4] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x + 125, _center.y + 65));
+                    temp[5] = (Dice)Actor.Instantiate(new Dice(dieMaxRoll), null, new Vector2(_center.x - 125, _center.y + 65));
                     break;
                 case 7:
                     break;

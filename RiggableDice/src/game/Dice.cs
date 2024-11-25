@@ -21,6 +21,7 @@ namespace RiggableDice
         private int _result;
         private int _riggedResult;
         public bool IsRolling { get => _isRolling; set => _isRolling = value; }
+        public int RiggedResult { get => _riggedResult; set => _riggedResult = value; }
 
         public Dice(int maxRoll)
         {
@@ -89,6 +90,7 @@ namespace RiggableDice
             if (_riggedResult > 0 && _riggedResult <= _maxRoll)
             {
                 roll = _riggedResult;
+                _riggedResult = 0;
             }
             else
             {

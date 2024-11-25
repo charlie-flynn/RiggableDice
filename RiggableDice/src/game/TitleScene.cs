@@ -43,6 +43,9 @@ namespace RiggableDice
                 case KeyboardKey.Five:
                     Game.CurrentScene = new DiceScene(5, 6);
                     break;
+                case KeyboardKey.Six:
+                    Game.CurrentScene = new DiceScene(6, 6);
+                    break;
             }
         }
     }
