@@ -10,20 +10,40 @@ namespace RiggableDice
 {
     internal class TitleScene : Scene
     {
-        Dice _dice;
         public override void Start()
         {
 
             base.Start();
-            _dice = (Dice)Actor.Instantiate(new Dice(20), null, new Vector2(50, 50));
         }
 
         public override void Update(double deltaTime)
         {
-            if (Raylib.IsKeyPressed(KeyboardKey.Space))
-                _dice.IsRolling = true;
+            KeyboardKey keyPressed = (KeyboardKey)Raylib.GetKeyPressed();
+            GoToDice(keyPressed);
 
             base.Update(deltaTime);
+        }
+
+        private void GoToDice(KeyboardKey key)
+        {
+            switch (key)
+            {
+                case KeyboardKey.One:
+                    Game.CurrentScene = new DiceScene(1, 6);
+                    break;
+                case KeyboardKey.Two:
+                    Game.CurrentScene = new DiceScene(2, 6);
+                    break;
+                case KeyboardKey.Three:
+                    Game.CurrentScene = new DiceScene(3, 6);
+                    break;
+                case KeyboardKey.Four:
+                    Game.CurrentScene = new DiceScene(4, 6);
+                    break;
+                case KeyboardKey.Five:
+                    Game.CurrentScene = new DiceScene(5, 6);
+                    break;
+            }
         }
     }
 }

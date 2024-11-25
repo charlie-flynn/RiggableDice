@@ -14,6 +14,7 @@ namespace RiggableDice
         private bool _isRolling = false;
         private float _fontSize;
         private double _timer;
+        private int _lastDisplayedNumber;
         private int _displayedNumber;
         private int _maxRoll;
         private int _rollCount;
@@ -24,18 +25,20 @@ namespace RiggableDice
         public Dice(int maxRoll)
         {
             _maxRoll = maxRoll;
+            _displayedNumber = maxRoll;
         }
 
         public override void Start()
         {
             base.Start();
             Transform.LocalScale = new Vector2(100, 100);
-            _fontSize = Transform.LocalScale.x / 4;
+            _fontSize = Transform.LocalScale.x / 3;
         }
 
         public override void Update(double deltaTime)
         {
             base.Update(deltaTime);
+
             // if it is rolling, change the displayed number every half a second
             // and increment the roll count
             if (_isRolling)
@@ -46,6 +49,13 @@ namespace RiggableDice
                         _result = DetermineRoll();
 
                     _displayedNumber = RandomNumberGenerator.GetInt32(1, _maxRoll + 1);
+                    if (_displayedNumber == _lastDisplayedNumber)
+                    {
+                        _displayedNumber++;
+                        if (_displayedNumber > _maxRoll)
+                            _displayedNumber -= 2;
+                    }
+                    _lastDisplayedNumber = _displayedNumber;
                     _rollCount++;
                     _timer = 0.1;
                 }
@@ -65,12 +75,10 @@ namespace RiggableDice
 
             // drawing
 
-            Vector2 offset = Transform.LocalScale / 2;
-            offset.x -= (_fontSize / 3.5f);
-            offset.y -= (_fontSize / 3.5f);
+            Rectangle rectangle = new Rectangle(Transform.GlobalPosition, Transform.GlobalScale);
 
-            Raylib.DrawRectangleV(Transform.LocalPosition, Transform.LocalScale, Color.Green);
-            Raylib.DrawTextPro(new Font(), _displayedNumber.ToString(), offset, Transform.LocalPosition * -1, 0, _fontSize, 5, Color.White);
+            Raylib.DrawRectanglePro(rectangle, Transform.GlobalScale / 2, 0, Color.Green);
+            Raylib.DrawTextPro(new Font(), _displayedNumber.ToString(), new Vector2(_fontSize / 3, _fontSize / 2) * -1, Transform.GlobalPosition * -1, 0, _fontSize, 5, Color.White);
 
         }
 

@@ -70,7 +70,7 @@ namespace RiggableDice
 
         public void Run()
         {
-            Raylib.InitWindow(800, 800, "Asteroids 2");
+            Raylib.InitWindow(800, 800, "Dice");
 
             // timing stuff
             Raylib.SetTargetFPS(60);
